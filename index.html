@@ -1,39 +1,24 @@
-from flask import Flask, request
-import telebot
-import os
-import random
-
-# Инициализация Flask приложения
-app = Flask(__name__)
-
-# Токен вашего Telegram бота
-TOKEN = "YOUR_TELEGRAM_BOT_TOKEN"
-
-# Папка с изображениями
-IMAGE_FOLDER = "images"
-
-# Инициализация Telegram бота
-bot = telebot.TeleBot(TOKEN)
-
-# Обработчик команды /start
-@bot.message_handler(commands=['start'])
-def start_message(message):
-    bot.reply_to(message, "Привет! Нажми на кнопку, чтобы получить сигнал.")
-
-# Обработчик нажатия кнопки "Получить сигнал"
-@bot.callback_query_handler(func=lambda call: True)
-def callback_query(call):
-    if call.data == 'get_signal':
-        random_image = random.choice(os.listdir(IMAGE_FOLDER))
-        with open(os.path.join(IMAGE_FOLDER, random_image), 'rb') as img:
-            bot.send_photo(call.message.chat.id, img)
-
-# Основная страница веб-приложения
-@app.route("/")
-def hello():
-    return "Hello, World!"
-
-# Запуск веб-приложения
-if __name__ == "__main__":
-    bot.remove_webhook()
-    bot.polling(none_stop=True)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Web-App</title>
+    <script>
+        function getRandomImage() {
+            // Генерируем случайное число от 1 до 3
+            var randomNumber = Math.floor(Math.random() * 3) + 1;
+            // Формируем путь к случайной картинке
+            var imageUrl = "https://raw.githubusercontent.com/Ravelorne/telegram-web-app-bot-example/main/images/image" + randomNumber + ".jpg";
+            // Устанавливаем этот путь как источник изображения
+            document.getElementById('random-image').src = imageUrl;
+        }
+    </script>
+</head>
+<body>
+    <h1>Telegram Web-App</h1>
+    <button onclick="getRandomImage()">Получить сигнал</button>
+    <br>
+    <img id="random-image" src="" alt="Random Image">
+</body>
+</html>
